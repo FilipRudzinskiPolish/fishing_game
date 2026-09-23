@@ -1,0 +1,41 @@
+body{
+    margin: 0;
+    border: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#game-container{
+    position: relative;
+}
+
+.ui{
+    width: 300px;
+    position: absolute;
+    z-index: 10;
+    top: 0px;
+    left: 0px;
+}
+
+#search{
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+}
+
+#results{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+#results li{
+    padding: 10px;
+    cursor: pointer;
+}
+
+#results li:hover{
+    background-color: #f0f0f0;
+}
