@@ -7,6 +7,7 @@ const state_input = document.getElementById("state_search");
 const state_results = document.getElementById("state_results");
 const city_input = document.getElementById("city_search");
 const city_results = document.getElementById("city_results");
+const enter_city = document.getElementById("enter-city")
 
 function Normalize(text){
     return text
@@ -290,3 +291,74 @@ country_input.addEventListener("input", ()=>{
         country_results.appendChild(li);
     })
 })
+
+enter_city.addEventListener("click", ()=>{
+    let latitude;
+    let longitude;
+
+    if(state_input.value.trim() == "" && country_input.value.trim() == "" && city_input != ""){
+        for(const [country_name, country] of Object.entries(citiesData)){
+            for(const [state_name, state] of Object.entries(country)){
+                for(const city of Object.keys(state)){
+                    if(Normalize(city_input.value.trim()) == Normalize(city)){
+                        ({latitude, longitude} = citiesData[country_name][state_name][city]);
+                    }
+                }
+            }
+        }
+    }
+
+    else if(state_input.value.trim() != "" && country_input.value.trim() == "" && city_input != ""){
+        for(const [country_name, country] of Object.entries(citiesData)){
+            for(const [state_name, state] of Object.entries(country)){
+                if(Normalize(state_input.value.trim()) == Normalize(state_name)){
+                    for(const city of Object.keys(state)){
+                        if(Normalize(city_input.value.trim()) == Normalize(city)){
+                            ({latitude, longitude} = citiesData[country_name][state_name][city]);
+                        }
+                    }  
+                }
+            }
+        }
+    }
+
+    else if(state_input.value.trim() == "" && country_input.value.trim() != "" && city_input != ""){
+        for(const [country_name, country] of Object.entries(citiesData)){
+            if(Normalize(country_input.value.trim()) == Normalize(country_name)){
+                for(const [state_name, state] of Object.entries(country)){
+                    for(const city of Object.keys(state)){
+                        if(Normalize(city_input.value.trim()) == Normalize(city)){
+                            ({latitude, longitude} = citiesData[country_name][state_name][city]);
+                        }
+                    }  
+                }
+            }
+        }
+    }
+
+    else if(state_input.value.trim() != "" && country_input.value.trim() != "" && city_input != ""){
+        for(const [country_name, country] of Object.entries(citiesData)){
+            if(Normalize(country_input.value.trim()) == Normalize(country_name)){
+                for(const [state_name, state] of Object.entries(country)){
+                    if(Normalize(state_input.value.trim()) == Normalize(state_name)){
+                        for(const city of Object.keys(state)){
+                            if(Normalize(city_input.value.trim()) == Normalize(city)){
+                                ({latitude, longitude} = citiesData[country_name][state_name][city]);;
+                            }
+                        }  
+                    }
+                }
+            }
+        }
+    }
+    
+    const weather_url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`;
+
+    getWeather(weather_url);
+})
+
+async function getWeather(weather_url){
+    const response = await fetch(weather_url);
+    const data = await response.json();
+    console.log(data);
+}
