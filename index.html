@@ -7,19 +7,34 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="game-container">
-        <canvas></canvas>
+    <canvas></canvas>
 
-        <div class="ui">
-            <input type="text" id="country_search" placeholder="search country" autocomplete="off">
-            <ul id="country_results"></ul>
-            <input type="text" id="state_search" placeholder="search state" autocomplete="off">
-            <ul id="state_results"></ul>
-            <input type="text" id="city_search" placeholder="search city" autocomplete="off">
-            <ul id="city_results"></ul>
+    <div class="ui">
+        <div id="title">Fishing game</div>
+
+        <div class="search-boxes">
+            <div class="country-ui">
+                <input type="text" id="country_search" placeholder="search country" autocomplete="off">
+                <ul id="country_results"></ul>
+            </div>
+            <div class="state-ui">
+                <input type="text" id="state_search" placeholder="search state" autocomplete="off">
+                <ul id="state_results"></ul>
+            </div>
+            <div class="city-ui">
+                <input type="text" id="city_search" placeholder="search city" autocomplete="off">
+                <ul id="city_results"></ul>
+            </div>
             <button id="enter-city">Enter</button>
+        </div>
+
+        <div class="game-info">
+            <div id="temperature">Temperature:</div>
+            <div id="wind-speed">Wind speed:</div>
+            <div id="weather">Weather: </div>
         </div>
     </div>
 </body>
+<script src="js/city_search.js"></script>
 <script type="module" src="js/main.js"></script>
 </html>

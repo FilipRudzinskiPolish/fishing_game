@@ -1,3 +1,4 @@
 # fishing_game
 
-country, state and city data is from GeoNames
+GeoNames used for getting country, state and city data
+Open-Meteo used for getting weather from city

@@ -6,22 +6,21 @@ body{
     font-family: Arial, Helvetica, sans-serif;
 }
 
-#game-container{
-    position: relative;
-}
-
-.ui{
-    width: 300px;
+canvas{
     position: absolute;
-    z-index: 10;
-    top: 0px;
-    left: 0px;
 }
 
-input{
-    width: 100%;
+.search-boxes{
+    position: relative;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+}
+
+.search-boxes input{
     padding: 10px;
     font-size: 16px;
+    width: 300px;
 }
 
 ul{
@@ -30,7 +29,6 @@ ul{
     margin: 0;
     border: 1px solid #ccc;
     background-color: white;
-    border-top: none;
     position: absolute;
 }
 
@@ -39,7 +37,7 @@ ul li{
     cursor: pointer;
 }
 
-#results li:hover{
+ul li:hover{
     background-color: #f0f0f0;
 }
 
@@ -47,4 +45,21 @@ ul li{
     font-size: 16px;
     padding: 10px;
     cursor: pointer;
+}
+
+.game-info{
+    z-index: 10;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#title{
+    z-index: 10;
+    font-size: 100px;
+    position: relative;
+    white-space: nowrap;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
 }
