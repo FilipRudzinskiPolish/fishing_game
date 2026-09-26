@@ -3,6 +3,7 @@ body{
     border: 0;
     padding: 0;
     overflow: hidden;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 #game-container{
@@ -17,21 +18,23 @@ body{
     left: 0px;
 }
 
-#search{
+input{
     width: 100%;
     padding: 10px;
     font-size: 16px;
 }
 
-#results{
+ul{
     list-style: none;
     padding: 0;
     margin: 0;
     border: 1px solid #ccc;
+    background-color: white;
     border-top: none;
+    position: absolute;
 }
 
-#results li{
+ul li{
     padding: 10px;
     cursor: pointer;
 }
