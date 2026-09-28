@@ -1,3 +1,5 @@
+import {changeState} from "./main.js";
+
 const weatherCodeMap = {
     0: ["Clear Sky", "sun.png"],
     1: ["Mainly Clear", "sun.png"],
@@ -39,6 +41,32 @@ const state_results = document.getElementById("state_results");
 const city_input = document.getElementById("city_search");
 const city_results = document.getElementById("city_results");
 const enter_city = document.getElementById("enter-city")
+
+
+function resultHider(){
+    requestAnimationFrame(resultHider);
+
+    if(country_results.children.length === 0){
+        country_results.style.borderWidth = "0px";
+    }else{
+        country_results.style.borderWidth = "3px";
+    }
+
+    if(state_results.children.length === 0){
+        state_results.style.borderWidth = "0px";
+    }else{
+        state_results.style.borderWidth = "3px";
+    }
+
+    if(city_results.children.length === 0){
+        city_results.style.borderWidth = "0px";
+    }else{
+        city_results.style.borderWidth = "3px";
+    }
+}
+
+resultHider();
+
 
 function Normalize(text){
     return text
@@ -409,4 +437,6 @@ async function getWeather(weather_url){
     document.getElementById("temperature").innerHTML = `Temperature: ${temperature}°`;
     document.getElementById("wind-speed").innerHTML = `Wind speed: ${wind_speed}km/h`;
     document.getElementById("weather").innerHTML = `Weather: ${weather_condition}`;
+
+    changeState("fishing");
 }
