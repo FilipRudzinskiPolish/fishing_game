@@ -11,9 +11,11 @@ export class Player{
     }
     Draw(c, camera, zoom, player_texture){
         c.fillStyle = "white";
+        /*
         c.fillRect((this.position.x - this.size.x/2) * zoom + camera.x, (this.position.y - this.size.y/2) * zoom + camera.y, this.size.x * zoom, this.size.y * zoom);
+        */
 
-        c.drawImage(player_texture, 32 * this.animation, 0, 32, 32, Math.trunc((this.position.x - 32) * zoom + camera.x), Math.trunc((this.position.y - 32) * zoom + camera.y), 64 * zoom, 64 * zoom)
+        c.drawImage(player_texture, 32 * this.animation, 0, 32, 32, Math.trunc((this.position.x - 32) * zoom + camera.x), Math.trunc((this.position.y - 48) * zoom + camera.y), 64 * zoom, 64 * zoom)
         
         let head_pos = 0;
         if(this.facing_direct == "up"){
@@ -29,12 +31,12 @@ export class Player{
         if(this.facing_direct == "left"){
             c.save();
             c.scale(-1, 1);
-            c.drawImage(player_texture, 96, 0, 32, 32, Math.trunc((this.position.x - 32 + 64) * zoom + camera.x) * -1, Math.trunc(this.position.y - 32 - 64) * zoom + camera.y, 64 * zoom, 64 * zoom)
+            c.drawImage(player_texture, 96, 0, 32, 32, Math.trunc((this.position.x - 32 + 64) * zoom + camera.x) * -1, Math.trunc(this.position.y - 48 - 64) * zoom + camera.y, 64 * zoom, 64 * zoom)
             c.restore();
         }
 
         if(this.facing_direct != "left"){
-            c.drawImage(player_texture, head_pos, 0, 32, 32, Math.trunc((this.position.x - 32) * zoom + camera.x), Math.trunc((this.position.y - 32 - 64) * zoom + camera.y), 64 * zoom, 64 * zoom)
+            c.drawImage(player_texture, head_pos, 0, 32, 32, Math.trunc((this.position.x - 32) * zoom + camera.x), Math.trunc((this.position.y - 48 - 64) * zoom + camera.y), 64 * zoom, 64 * zoom)
         }
     }
     Collision(tile){

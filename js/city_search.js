@@ -424,9 +424,9 @@ async function getWeather(weather_url){
         const response = await fetch(weather_url);
         const data = await response.json();
         console.log(data);
-        let temperature = data.current_weather.temperature;
-        let wind_speed = data.current_weather.windspeed;
-        let [weather_condition, weather_image] = weatherCodeMap[data.current_weather.weathercode];
+        temperature = data.current_weather.temperature;
+        wind_speed = data.current_weather.windspeed;
+        [weather_condition, weather_image] = weatherCodeMap[data.current_weather.weathercode];
     }
     else{
         temperature = 10;

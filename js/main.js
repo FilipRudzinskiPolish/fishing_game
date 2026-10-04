@@ -9,6 +9,7 @@ tile_texture.src = "./img/tiles.png";
 const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
 const menu_ui = document.querySelectorAll(".menu-ui");
+const game_info = document.querySelectorAll(".game-info");
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -40,9 +41,15 @@ function updateUi(){
         menu_ui.forEach(element => {
             element.style.display = "block";
         });
+        game_info.forEach(element => {
+            element.style.display = "none";
+        });
     }else{
         menu_ui.forEach(element => {
             element.style.display = "none";
+        });
+        game_info.forEach(element => {
+            element.style.display = "block";
         });
     }
 }
