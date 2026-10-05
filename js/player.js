@@ -1,6 +1,6 @@
 export class Player{
     constructor(){
-        this.position = {x: 0, y: 0};
+        this.position = {x: 1000, y: 1000};
         this.velocity = {x: 0, y: 0};
         this.speed = 0.8;
         this.facing_direct = "down";

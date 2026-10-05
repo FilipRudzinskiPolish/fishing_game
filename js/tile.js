@@ -7,10 +7,9 @@ export class Tile{
         this.animation = 0;
         if(this.type == 1){
             this.collision = true;
-            this.animation_tick = 0;
         }
     }
-    Draw(c, camera, zoom, tile_texture){
+    Draw(c, camera, zoom, tile_texture, tick){
         c.drawImage(tile_texture, 32 * (this.type + this.animation), 0, 32, 32, Math.trunc((this.position.x - this.size.x/2) * zoom + camera.x), Math.trunc((this.position.y - this.size.y/2) * zoom + camera.y), this.size.x * zoom, this.size.y * zoom);
 
         if(this.type == 1){
@@ -19,13 +18,15 @@ export class Tile{
             c.fillRect(Math.trunc((this.position.x - this.size.x/2) * zoom + camera.x), Math.trunc((this.position.y - this.size.y/2) * zoom + camera.y), this.size.x * zoom, this.size.y * zoom);
             c.globalCompositeOperation = "source-over";
         };
+        
+        /*
+        c.strokeStyle = "black";
+        c.lineWidth = 2;
+        c.strokeRect(Math.trunc((this.position.x - this.size.x/2) * zoom + camera.x), Math.trunc((this.position.y - this.size.y/2) * zoom + camera.y), this.size.x * zoom, this.size.y * zoom);
+        */
 
         if(this.type == 1){
-            this.animation_tick += 0.05;
-            if(this.animation_tick > 40){
-                this.animation_tick = 0;
-            }
-            this.animation = Math.trunc(this.animation_tick);
+            this.animation = Math.trunc(tick);
         }
     }
 }
