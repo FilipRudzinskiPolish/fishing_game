@@ -17,11 +17,9 @@ canvas.height = window.innerHeight;
 let game_state = "menu";
 let player = new Player();
 
-const chunk_size = 8;
+const chunk_size = 22;
 let chunks = {};
 let loaded_chunks = {};
-
-let tiles = [];
 
 fetch("map/fishing_game_map.csv")
     .then(response => response.text())
@@ -114,7 +112,7 @@ let tick = 0;
 
 function gameLoop(){
     c.clearRect(0, 0, canvas.width, canvas.height);
-    c.fillStyle = "black";
+    c.fillStyle = "rgb(50, 65, 53)";
     c.fillRect(0, 0, canvas.width, canvas.height);
     c.imageSmoothingEnabled = false;
 
@@ -128,7 +126,7 @@ function gameLoop(){
         c.fillRect(0, 0, canvas.width, canvas.height);
     }
 
-    player.Movement(user_input, tiles);
+    player.Movement(user_input, loaded_chunks);
 
     chunkLoader();
 

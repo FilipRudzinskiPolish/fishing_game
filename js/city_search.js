@@ -434,7 +434,7 @@ async function getWeather(weather_url){
         [weather_condition, weather_image] = weatherCodeMap[0];
     }
 
-    document.getElementById("temperature").innerHTML = `Temperature: ${temperature}°`;
+    document.getElementById("temperature").innerHTML = `Temperature: ${temperature}°C`;
     document.getElementById("wind-speed").innerHTML = `Wind speed: ${wind_speed}km/h`;
     document.getElementById("weather").innerHTML = `Weather: ${weather_condition}`;
 

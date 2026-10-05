@@ -1,6 +1,6 @@
 export class Player{
     constructor(){
-        this.position = {x: 1000, y: 1000};
+        this.position = {x: 2000, y: 1000};
         this.velocity = {x: 0, y: 0};
         this.speed = 0.8;
         this.facing_direct = "down";
@@ -47,7 +47,7 @@ export class Player{
         }
     }
 
-    Movement(user_input, tiles){
+    Movement(user_input, loaded_chunks){
         const direction = {x: 0, y: 0};
 
         if(user_input.left == true){
@@ -91,30 +91,34 @@ export class Player{
         this.velocity.x *= 0.85;
         this.velocity.y *= 0.85;
         this.position.x += this.velocity.x * this.speed;
-        tiles.forEach(tile => {
-            if(tile.collision == true){
-                if(this.Collision(tile)){
-                    if(this.velocity.x > 0){
-                        this.position.x = tile.position.x - tile.size.x/2 - this.size.x/2 - 0.01;
-                    }
-                    if(this.velocity.x < 0){
-                        this.position.x = tile.position.x + tile.size.x/2 + this.size.x/2 + 0.01;
+        for(const chunk in loaded_chunks){
+            for(const tile of loaded_chunks[chunk]){
+                if(tile.collision == true){
+                    if(this.Collision(tile)){
+                        if(this.velocity.x > 0){
+                            this.position.x = tile.position.x - tile.size.x/2 - this.size.x/2 - 0.01;
+                        }
+                        if(this.velocity.x < 0){
+                            this.position.x = tile.position.x + tile.size.x/2 + this.size.x/2 + 0.01;
+                        }
                     }
                 }
             }
-        });
+        }
         this.position.y += this.velocity.y * this.speed;
-        tiles.forEach(tile => {
-            if(tile.collision == true){
-                if(this.Collision(tile)){
-                    if(this.velocity.y > 0){
-                        this.position.y = tile.position.y - tile.size.y/2 - this.size.y/2 - 0.01;
-                    }
-                    if(this.velocity.y < 0){
-                        this.position.y = tile.position.y + tile.size.y/2 + this.size.y/2 + 0.01;
+        for(const chunk in loaded_chunks){
+            for(const tile of loaded_chunks[chunk]){
+                if(tile.collision == true){
+                    if(this.Collision(tile)){
+                        if(this.velocity.y > 0){
+                            this.position.y = tile.position.y - tile.size.y/2 - this.size.y/2 - 0.01;
+                        }
+                        if(this.velocity.y < 0){
+                            this.position.y = tile.position.y + tile.size.y/2 + this.size.y/2 + 0.01;
+                        }
                     }
                 }
             }
-        });
+        }
     }
 }
