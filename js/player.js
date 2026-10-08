@@ -2,7 +2,7 @@ export class Player{
     constructor(){
         this.position = {x: 2000, y: 1000};
         this.velocity = {x: 0, y: 0};
-        this.speed = 0.8;
+        this.speed = 1000;
         this.facing_direct = "down";
         this.size = {x: 48, y: 48};
         this.animation_tick = 0;
@@ -47,7 +47,7 @@ export class Player{
         }
     }
 
-    Movement(user_input, loaded_chunks){
+    Movement(user_input, loaded_chunks, dt){
         const direction = {x: 0, y: 0};
 
         if(user_input.left == true){
@@ -71,9 +71,9 @@ export class Player{
         const magn = Math.sqrt(Math.pow(direction.x, 2) + Math.pow(direction.y, 2));
 
         if(magn != 0){
-            this.velocity.x += direction.x / magn;
-            this.velocity.y += direction.y / magn;
-            this.animation_tick += 1;
+            this.velocity.x += (direction.x / magn) * dt * 20;
+            this.velocity.y += (direction.y / magn) * dt * 20;
+            this.animation_tick += dt * 120;
         }else{
             this.animation_tick = 0;
         }
@@ -88,9 +88,10 @@ export class Player{
             this.animation = 0;
         }
         
-        this.velocity.x *= 0.85;
-        this.velocity.y *= 0.85;
-        this.position.x += this.velocity.x * this.speed;
+        const friction = 0.6;
+        this.velocity.x *= Math.pow(friction, dt * 60);
+        this.velocity.y *= Math.pow(friction, dt * 60);
+        this.position.x += this.velocity.x * this.speed * dt;
         for(const chunk in loaded_chunks){
             for(const tile of loaded_chunks[chunk]){
                 if(tile.collision == true){
@@ -105,7 +106,7 @@ export class Player{
                 }
             }
         }
-        this.position.y += this.velocity.y * this.speed;
+        this.position.y += this.velocity.y * this.speed * dt;
         for(const chunk in loaded_chunks){
             for(const tile of loaded_chunks[chunk]){
                 if(tile.collision == true){

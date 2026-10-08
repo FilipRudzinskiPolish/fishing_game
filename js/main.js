@@ -110,13 +110,18 @@ function getCamera(position){
 let zoom = 1;
 let tick = 0;
 
-function gameLoop(){
+let last_time = 0;
+
+function gameLoop(current_time){
     c.clearRect(0, 0, canvas.width, canvas.height);
     c.fillStyle = "rgb(50, 65, 53)";
     c.fillRect(0, 0, canvas.width, canvas.height);
     c.imageSmoothingEnabled = false;
 
-    tick += 0.05;
+    const dt = (current_time - last_time) / 1000;
+    last_time = current_time;
+    
+    tick += 5 * dt;
     if(tick > 40){
         tick = 0;
     }
@@ -126,7 +131,7 @@ function gameLoop(){
         c.fillRect(0, 0, canvas.width, canvas.height);
     }
 
-    player.Movement(user_input, loaded_chunks);
+    player.Movement(user_input, loaded_chunks, dt);
 
     chunkLoader();
 
@@ -143,7 +148,7 @@ function gameLoop(){
     requestAnimationFrame(gameLoop);
 }
 
-gameLoop();
+requestAnimationFrame(gameLoop);
 console.log(loaded_chunks);
 
 addEventListener("resize", ()=>{

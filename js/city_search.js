@@ -354,6 +354,9 @@ country_input.addEventListener("input", ()=>{
 enter_city.addEventListener("click", ()=>{
     let latitude;
     let longitude;
+    let country_name_input;
+    let state_name_input;
+    let city_name_input;
 
     if(state_input.value.trim() == "" && country_input.value.trim() == "" && city_input != ""){
         for(const [country_name, country] of Object.entries(citiesData)){
@@ -361,6 +364,10 @@ enter_city.addEventListener("click", ()=>{
                 for(const city of Object.keys(state)){
                     if(Normalize(city_input.value.trim()) == Normalize(city)){
                         ({latitude, longitude} = citiesData[country_name][state_name][city]);
+
+                        country_name_input = (country_name);
+                        state_name_input = (state_name);
+                        city_name_input = (city);
                     }
                 }
             }
@@ -374,6 +381,10 @@ enter_city.addEventListener("click", ()=>{
                     for(const city of Object.keys(state)){
                         if(Normalize(city_input.value.trim()) == Normalize(city)){
                             ({latitude, longitude} = citiesData[country_name][state_name][city]);
+
+                            country_name_input = (country_name);
+                            state_name_input = (state_name);
+                            city_name_input = (city);
                         }
                     }  
                 }
@@ -388,6 +399,10 @@ enter_city.addEventListener("click", ()=>{
                     for(const city of Object.keys(state)){
                         if(Normalize(city_input.value.trim()) == Normalize(city)){
                             ({latitude, longitude} = citiesData[country_name][state_name][city]);
+
+                            country_name_input = (country_name);
+                            state_name_input = (state_name);
+                            city_name_input = (city);
                         }
                     }  
                 }
@@ -402,7 +417,11 @@ enter_city.addEventListener("click", ()=>{
                     if(Normalize(state_input.value.trim()) == Normalize(state_name)){
                         for(const city of Object.keys(state)){
                             if(Normalize(city_input.value.trim()) == Normalize(city)){
-                                ({latitude, longitude} = citiesData[country_name][state_name][city]);;
+                                ({latitude, longitude} = citiesData[country_name][state_name][city]);
+
+                                country_name_input = (country_name);
+                                state_name_input = (state_name);
+                                city_name_input = (city);
                             }
                         }  
                     }
@@ -413,14 +432,14 @@ enter_city.addEventListener("click", ()=>{
     
     const weather_url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`;
 
-    getWeather(weather_url);
+    getWeather(weather_url, country_name_input, state_name_input, city_name_input);
 })
 
-async function getWeather(weather_url){
+async function getWeather(weather_url, country_name_input, state_name_input, city_name_input){
     let temperature;
     let wind_speed;
     let weather_condition, weather_image;
-    if(false){
+    if(true){
         const response = await fetch(weather_url);
         const data = await response.json();
         console.log(data);
@@ -429,11 +448,15 @@ async function getWeather(weather_url){
         [weather_condition, weather_image] = weatherCodeMap[data.current_weather.weathercode];
     }
     else{
+        country_name_input = "country";
+        state_name_input = "state";
+        city_name_input = "city";
         temperature = 10;
         wind_speed = 2;
         [weather_condition, weather_image] = weatherCodeMap[0];
     }
 
+    document.getElementById("location").innerHTML = `Location: ${country_name_input}, ${state_name_input}, ${city_name_input}`;
     document.getElementById("temperature").innerHTML = `Temperature: ${temperature}°C`;
     document.getElementById("wind-speed").innerHTML = `Wind speed: ${wind_speed}km/h`;
     document.getElementById("weather").innerHTML = `Weather: ${weather_condition}`;

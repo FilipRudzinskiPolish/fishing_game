@@ -71,6 +71,20 @@ ul li:hover{
     top: 0;
     left: 0;
     display: none;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+#box{
+    z-index: 5;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    background-color: rgb(114, 133, 197);
+    border: 3px solid rgb(40, 47, 68);
+    border-bottom-right-radius: 20px;
+    padding: 5px;
 }
 
 #title{
