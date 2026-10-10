@@ -1,15 +1,18 @@
 import {Player} from "./player.js";
 import {Tile} from "./tile.js"
+import {Object} from "./object.js"
 
 const player_texture = new Image();
 player_texture.src = "./img/player.png";
 const tile_texture = new Image();
 tile_texture.src = "./img/tiles.png";
+const obj_texture = new Image();
+obj_texture.src = "./img/objects.png";
 
 const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
 const menu_ui = document.querySelectorAll(".menu-ui");
-const game_info = document.querySelectorAll(".game-info");
+const game_info = document.querySelectorAll(".game-info, .location");
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -19,7 +22,9 @@ let player = new Player();
 
 const chunk_size = 22;
 let chunks = {};
+let obj_chunks = {};
 let loaded_chunks = {};
+let loaded_obj_chunks = {};
 
 fetch("map/fishing_game_map.csv")
     .then(response => response.text())
@@ -47,6 +52,30 @@ fetch("map/fishing_game_map.csv")
         }
     });
 
+fetch("map/objects.csv")
+    .then(response => response.text())
+    .then(text => {
+        const data = text
+            .trim()
+            .split("\n")
+            .map(row => row.split(","));
+
+        for(let row = 0; row < data.length; row++){
+            const chunk_x = Math.floor((data[row][1] / 32) / chunk_size);
+            const chunk_y = Math.floor((data[row][2] / 32) / chunk_size);
+
+            const chunk_name = `${chunk_x},${chunk_y}`;
+
+            if(!(chunk_name in obj_chunks)){
+                obj_chunks[chunk_name] = [];
+            }
+
+            obj_chunks[chunk_name].push({
+                x: Number(data[row][1] * 2), y: Number(data[row][2] * 2), type: data[row][0]
+            });
+        }
+    });
+
 function chunkLoader(){
     const player_chunk_x = Math.floor((player.position.x / 64) / chunk_size);
     const player_chunk_y = Math.floor((player.position.y / 64) / chunk_size);
@@ -64,12 +93,25 @@ function chunkLoader(){
                     loaded_chunks[chunk_name].push(new Tile({x: tile.x * 64, y: tile.y * 64}, Number(tile.type)));
                 }
             }
+            if(!(chunk_name in loaded_obj_chunks) && (obj_chunks[chunk_name])){
+                loaded_obj_chunks[chunk_name] = [];
+                for(const obj of obj_chunks[chunk_name]){
+                    loaded_obj_chunks[chunk_name].push(new Object({x: obj.x, y: obj.y}, obj.type));
+                }
+            }
 
             for(const loaded_chunk_name in loaded_chunks){
                 const [loaded_chunk_x, loaded_chunk_y] = loaded_chunk_name.split(",").map(Number);
 
                 if(Math.abs(loaded_chunk_x - player_chunk_x) > 1 || Math.abs(loaded_chunk_y - player_chunk_y) > 1){
                     delete loaded_chunks[loaded_chunk_name];
+                }
+            }
+            for(const loaded_chunk_name in loaded_obj_chunks){
+                const [loaded_chunk_x, loaded_chunk_y] = loaded_chunk_name.split(",").map(Number);
+
+                if(Math.abs(loaded_chunk_x - player_chunk_x) > 1 || Math.abs(loaded_chunk_y - player_chunk_y) > 1){
+                    delete loaded_obj_chunks[loaded_chunk_name];
                 }
             }
         }
@@ -96,6 +138,13 @@ function updateUi(){
     }
 }
 
+function updateLocation(){
+    const button = document.querySelector(".location").addEventListener("click", ()=>{
+        game_state = "menu";
+        updateUi()
+    });
+}
+
 export function changeState(text){
     game_state = text;
     updateUi();
@@ -118,38 +167,47 @@ function gameLoop(current_time){
     c.fillRect(0, 0, canvas.width, canvas.height);
     c.imageSmoothingEnabled = false;
 
-    const dt = (current_time - last_time) / 1000;
-    last_time = current_time;
-    
-    tick += 5 * dt;
-    if(tick > 40){
-        tick = 0;
-    }
-
     if(game_state === "menu"){
         c.fillStyle = "rgb(131, 103, 103)";
         c.fillRect(0, 0, canvas.width, canvas.height);
     }
 
-    player.Movement(user_input, loaded_chunks, dt);
+    if(game_state === "fishing"){
+        updateLocation();
 
-    chunkLoader();
-
-    camera = getCamera(player.position);
-    
-    for(const chunk in loaded_chunks){
-        for(const tile of loaded_chunks[chunk]){
-            tile.Draw(c, camera, zoom, tile_texture, tick);
+        const dt = (current_time - last_time) / 1000;
+        last_time = current_time;
+        
+        tick += 5 * dt;
+        if(tick > 40){
+            tick = 0;
         }
+
+        player.Movement(user_input, loaded_chunks, dt);
+
+        chunkLoader();
+
+        camera = getCamera(player.position);
+        
+        for(const chunk in loaded_chunks){
+            for(const tile of loaded_chunks[chunk]){
+                tile.Draw(c, camera, zoom, tile_texture, tick);
+            }
+        }
+
+        for(const chunk in loaded_obj_chunks){
+            for(const obj of loaded_obj_chunks[chunk]){
+                obj.Draw(c, camera, zoom, obj_texture);
+            }
+        }
+        
+        player.Draw(c, camera, zoom, player_texture);
     }
-    
-    player.Draw(c, camera, zoom, player_texture);
 
     requestAnimationFrame(gameLoop);
 }
 
 requestAnimationFrame(gameLoop);
-console.log(loaded_chunks);
 
 addEventListener("resize", ()=>{
     canvas.width = window.innerWidth;

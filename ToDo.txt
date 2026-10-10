@@ -1,0 +1,5 @@
+Fishing - Throwing line, catching fish, storing fish in inventory, viewing fish.
+Objects - storing them in csv, putting them in chunks, loading them, making them do stuff
+Translations - English, Polish.
+Weather - Affecting fish that you can catch, affecting sound, affecting what tiles look like, affecting how trees look like, rain / snow / fog effects, Temperature | wind speed | weather type will probably be checked.
+Location - Store locations in another file, depending on player location different fish can be caught.

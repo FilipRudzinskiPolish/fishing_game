@@ -439,7 +439,7 @@ async function getWeather(weather_url, country_name_input, state_name_input, cit
     let temperature;
     let wind_speed;
     let weather_condition, weather_image;
-    if(true){
+    if(false){
         const response = await fetch(weather_url);
         const data = await response.json();
         console.log(data);
