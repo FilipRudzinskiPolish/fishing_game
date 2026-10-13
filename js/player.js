@@ -1,12 +1,16 @@
+import {playAudio} from "./playAudio.js";
+
 export class Player{
     constructor(){
         this.position = {x: 2000, y: 1000};
         this.velocity = {x: 0, y: 0};
-        this.speed = 1000;
+        this.speed = 800;
         this.facing_direct = "down";
         this.size = {x: 48, y: 48};
         this.animation_tick = 0;
         this.animation = 0;
+        this.fishing = false;
+        this.cast_range = 50;
 
     }
     Draw(c, camera, zoom, player_texture){
@@ -19,73 +23,94 @@ export class Player{
         
         let head_pos = 0;
         if(this.facing_direct == "up"){
-            head_pos = 128;
+            head_pos = 160;
         }
         if(this.facing_direct == "down"){
-            head_pos = 64;
+            head_pos = 96;
         }
         if(this.facing_direct == "right"){
-            head_pos = 96
+            head_pos = 128;
         }
         
         if(this.facing_direct == "left"){
             c.save();
             c.scale(-1, 1);
-            c.drawImage(player_texture, 96, 0, 32, 32, Math.trunc((this.position.x - 32 + 64) * zoom + camera.x) * -1, Math.trunc(this.position.y - 48 - 64) * zoom + camera.y, 64 * zoom, 64 * zoom)
+            c.drawImage(player_texture, 128, 0, 32, 32, Math.trunc((this.position.x - 32 + 64) * zoom + camera.x) * -1, Math.trunc(this.position.y - 48 - 64) * zoom + camera.y, 64 * zoom, 64 * zoom)
             c.restore();
         }
 
         if(this.facing_direct != "left"){
             c.drawImage(player_texture, head_pos, 0, 32, 32, Math.trunc((this.position.x - 32) * zoom + camera.x), Math.trunc((this.position.y - 48 - 64) * zoom + camera.y), 64 * zoom, 64 * zoom)
         }
+
+        if(this.fishing){
+            c.fillStyle = "black";
+            c.fillRect((this.position.x - 150) * zoom + camera.x, (this.position.y - 20 - 200) * zoom + camera.y, 300 * zoom, 40 * zoom)
+
+            c.fillStyle = "lightgreen";
+            c.fillRect((this.position.x - 150) * zoom + camera.x, (this.position.y - 20 - 200) * zoom + camera.y, 3 * this.cast_range * zoom, 40 * zoom)
+        }
     }
-    Collision(tile){
-        if((((this.position.x - this.size.x/2 >= tile.position.x - tile.size.x/2) && (this.position.x - this.size.x/2 <= tile.position.x + tile.size.x/2)) || ((this.position.x + this.size.x/2 >= tile.position.x - tile.size.x/2) && (this.position.x + this.size.x/2 <= tile.position.x + tile.size.x/2))) && (((this.position.y - this.size.y/2 >= tile.position.y - tile.size.y/2) && (this.position.y - this.size.y/2 <= tile.position.y + tile.size.y/2)) || ((this.position.y + this.size.y/2 >= tile.position.y - tile.size.y/2) && (this.position.y + this.size.y/2 <= tile.position.y + tile.size.y/2)))){
+    Collision(tile, type){
+        if(type === "tile"){
+            if((((this.position.x - this.size.x/2 >= tile.position.x - tile.size.x/2) && (this.position.x - this.size.x/2 <= tile.position.x + tile.size.x/2)) || ((this.position.x + this.size.x/2 >= tile.position.x - tile.size.x/2) && (this.position.x + this.size.x/2 <= tile.position.x + tile.size.x/2))) && (((this.position.y - this.size.y/2 >= tile.position.y - tile.size.y/2) && (this.position.y - this.size.y/2 <= tile.position.y + tile.size.y/2)) || ((this.position.y + this.size.y/2 >= tile.position.y - tile.size.y/2) && (this.position.y + this.size.y/2 <= tile.position.y + tile.size.y/2)))){
             return true;
-        }else{
-            return false;
+            }else{
+                return false;
+            }
+        }
+        else if(type === "obj"){
+            if((((this.position.x - this.size.x/2 >= tile.hitbox_pos.x - tile.hitbox_size.x/2) && (this.position.x - this.size.x/2 <= tile.hitbox_pos.x + tile.hitbox_size.x/2)) || ((this.position.x + this.size.x/2 >= tile.hitbox_pos.x - tile.hitbox_size.x/2) && (this.position.x + this.size.x/2 <= tile.hitbox_pos.x + tile.hitbox_size.x/2))) && (((this.position.y - this.size.y/2 >= tile.hitbox_pos.y - tile.hitbox_size.y/2) && (this.position.y - this.size.y/2 <= tile.hitbox_pos.y + tile.hitbox_size.y/2)) || ((this.position.y + this.size.y/2 >= tile.hitbox_pos.y - tile.hitbox_size.y/2) && (this.position.y + this.size.y/2 <= tile.hitbox_pos.y + tile.hitbox_size.y/2)))){
+            return true;
+            }else{
+                return false;
+            }
         }
     }
 
-    Movement(user_input, loaded_chunks, dt){
+    Movement(user_input, loaded_chunks, loaded_obj_chunks, dt){
         const direction = {x: 0, y: 0};
 
-        if(user_input.left == true){
-            direction.x -= 1;
-            this.facing_direct = "left";
-        }
-        if(user_input.right == true){
-            direction.x += 1;
-            this.facing_direct = "right";
-        }
-        if(user_input.up == true){
-            direction.y -= 1;
-            this.facing_direct = "up";
-        }
-        if(user_input.down == true){
-            direction.y += 1;
-            this.facing_direct = "down";
-        }
+        if(!this.fishing){
+            if(user_input.left == true){
+                direction.x -= 1;
+                this.facing_direct = "left";
+            }
+            if(user_input.right == true){
+                direction.x += 1;
+                this.facing_direct = "right";
+            }
+            if(user_input.up == true){
+                direction.y -= 1;
+                this.facing_direct = "up";
+            }
+            if(user_input.down == true){
+                direction.y += 1;
+                this.facing_direct = "down";
+            }
 
 
-        const magn = Math.sqrt(Math.pow(direction.x, 2) + Math.pow(direction.y, 2));
+            const magn = Math.sqrt(Math.pow(direction.x, 2) + Math.pow(direction.y, 2));
 
-        if(magn != 0){
-            this.velocity.x += (direction.x / magn) * dt * 20;
-            this.velocity.y += (direction.y / magn) * dt * 20;
-            this.animation_tick += dt * 120;
-        }else{
-            this.animation_tick = 0;
-        }
+            if(magn != 0){
+                this.velocity.x += (direction.x / magn) * dt * 20;
+                this.velocity.y += (direction.y / magn) * dt * 20;
+                this.animation_tick += dt * 120;
+            }else{
+                this.animation_tick = 0;
+            }
 
-        if(this.animation_tick >= 40){
-            this.animation_tick = 0;
-        }
-        if(this.animation_tick <= 20 && this.animation_tick > 0){
-            this.animation = 1;
-        }
-        if(this.animation_tick > 20 || this.animation_tick == 0){
-            this.animation = 0;
+            if(this.animation_tick >= 40){
+                this.animation_tick = 0;
+                playAudio("audio/mud02.ogg", 0.2);
+
+            }
+            if(this.animation_tick <= 20 && this.animation_tick > 0){
+                this.animation = 1;
+            }
+            if(this.animation_tick > 20 || this.animation_tick == 0){
+                this.animation = 0;
+            }
         }
         
         const friction = 0.6;
@@ -95,7 +120,7 @@ export class Player{
         for(const chunk in loaded_chunks){
             for(const tile of loaded_chunks[chunk]){
                 if(tile.collision == true){
-                    if(this.Collision(tile)){
+                    if(this.Collision(tile, "tile")){
                         if(this.velocity.x > 0){
                             this.position.x = tile.position.x - tile.size.x/2 - this.size.x/2 - 0.01;
                         }
@@ -106,11 +131,25 @@ export class Player{
                 }
             }
         }
+        for(const chunk in loaded_obj_chunks){
+            for(const obj of loaded_obj_chunks[chunk]){
+                if(obj.collision == true){
+                    if(this.Collision(obj, "obj")){
+                        if(this.velocity.x > 0){
+                            this.position.x = obj.hitbox_pos.x - obj.hitbox_size.x/2 - this.size.x/2 - 0.01;
+                        }
+                        if(this.velocity.x < 0){
+                            this.position.x = obj.hitbox_pos.x + obj.hitbox_size.x/2 + this.size.x/2 + 0.01;
+                        }
+                    }
+                }
+            }
+        }
         this.position.y += this.velocity.y * this.speed * dt;
         for(const chunk in loaded_chunks){
             for(const tile of loaded_chunks[chunk]){
                 if(tile.collision == true){
-                    if(this.Collision(tile)){
+                    if(this.Collision(tile, "tile")){
                         if(this.velocity.y > 0){
                             this.position.y = tile.position.y - tile.size.y/2 - this.size.y/2 - 0.01;
                         }
@@ -120,6 +159,29 @@ export class Player{
                     }
                 }
             }
+        }
+        for(const chunk in loaded_obj_chunks){
+            for(const obj of loaded_obj_chunks[chunk]){
+                if(obj.collision == true){
+                    if(this.Collision(obj, "obj")){
+                        if(this.velocity.y > 0){
+                            this.position.y = obj.hitbox_pos.y - obj.hitbox_size.y/2 - this.size.y/2 - 0.01;
+                        }
+                        if(this.velocity.y < 0){
+                            this.position.y = obj.hitbox_pos.y + obj.hitbox_size.y/2 + this.size.y/2 + 0.01;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    Fishing(user_input, dt){
+        if(user_input.space){
+            if(!this.fishing){
+                this.animation = 2;
+                this.fishing = true;
+            }
+            
         }
     }
 }

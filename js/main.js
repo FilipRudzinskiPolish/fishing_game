@@ -118,7 +118,7 @@ function chunkLoader(){
     }
 }
 
-let user_input = {left: false, right: false, up: false, down: false};
+let user_input = {left: false, right: false, up: false, down: false, space: false};
 
 function updateUi(){
     if(game_state === "menu"){
@@ -183,7 +183,9 @@ function gameLoop(current_time){
             tick = 0;
         }
 
-        player.Movement(user_input, loaded_chunks, dt);
+        player.Fishing(user_input, dt);
+
+        player.Movement(user_input, loaded_chunks, loaded_obj_chunks, dt);
 
         chunkLoader();
 
@@ -197,11 +199,21 @@ function gameLoop(current_time){
 
         for(const chunk in loaded_obj_chunks){
             for(const obj of loaded_obj_chunks[chunk]){
-                obj.Draw(c, camera, zoom, obj_texture);
+                if(obj.hitbox_pos.y <= player.position.y){
+                    obj.Draw(c, camera, zoom, obj_texture);
+                }
             }
         }
         
         player.Draw(c, camera, zoom, player_texture);
+
+        for(const chunk in loaded_obj_chunks){
+            for(const obj of loaded_obj_chunks[chunk]){
+                if(obj.hitbox_pos.y > player.position.y){
+                    obj.Draw(c, camera, zoom, obj_texture);
+                }
+            }
+        }
     }
 
     requestAnimationFrame(gameLoop);
@@ -227,6 +239,9 @@ addEventListener("keydown", event=>{
     if(event.key === "s"){
         user_input.down = true;
     }
+    if(event.key === " "){
+        user_input.space = true;
+    }
 })
 
 addEventListener("keyup", event=>{
@@ -241,5 +256,8 @@ addEventListener("keyup", event=>{
     }
     if(event.key === "s"){
         user_input.down = false;
+    }
+    if(event.key === " "){
+        user_input.space = false;
     }
 })
